@@ -29,8 +29,6 @@ public class TarefaDAO extends BaseDAO{
 
             pre.execute();
 
-            System.out.println("Tarefa cadastrada com sucesso!");
-
         } catch (SQLException e) {
             System.out.println("Erro ao cadastrar Tarefa: " + e.getMessage());
             e.printStackTrace();
@@ -43,6 +41,8 @@ public class TarefaDAO extends BaseDAO{
         String query = "SELECT * FROM tarefas WHERE usuario_id = ?";
         List<Tarefa> listaTarefas = new ArrayList<>();
 
+        System.out.println();
+
         try (
                 Connection conn = conn();
                 PreparedStatement pre = conn.prepareStatement(query);
@@ -53,18 +53,16 @@ public class TarefaDAO extends BaseDAO{
 
             while (resultado.next()){
 
-//                Long id = resultado.getLong("id");
+                Long id = resultado.getLong("id");
                 String titulo = resultado.getString("titulo");
                 String descricao = resultado.getString("descricao");
                 Situacao situacao = Situacao.valueOf(resultado.getString("situacao"));
 
-                Tarefa tarefa = new Tarefa(titulo, descricao, situacao, usuario);
+                Tarefa tarefa = new Tarefa(id, titulo, descricao, situacao, usuario);
 
                 listaTarefas.add(tarefa);
 
             }
-
-            System.out.println("Tarefas obtidas com sucesso!");
 
         } catch (SQLException e) {
             System.out.println("Erro ao obter as tarefas: " + e.getMessage());
@@ -86,9 +84,6 @@ public class TarefaDAO extends BaseDAO{
             pre.setLong(1, tarefa.getId());
 
             pre.execute();
-
-            System.out.println("Tarefa deletada com sucesso!");
-
 
         } catch (SQLException e) {
             System.out.println("Erro ao obter as tarefas: " + e.getMessage());

@@ -18,6 +18,14 @@ public class Tarefa {
         this.usuario = usuario;
     }
 
+    public Tarefa(Long id, String titulo, String descricao, Situacao situacao, Usuario usuario) {
+        this.id = id;
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.situacao = situacao;
+        this.usuario = usuario;
+    }
+
     public Long getId() {
         return id;
     }

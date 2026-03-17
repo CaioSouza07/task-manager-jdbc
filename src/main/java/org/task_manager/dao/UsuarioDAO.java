@@ -28,7 +28,7 @@ public class UsuarioDAO extends BaseDAO{
                 Long id = resultado.getLong("id");
                 String nome = resultado.getString("nome");
 
-                Usuario usuario = new Usuario(nome, email, senha);
+                Usuario usuario = new Usuario(id, nome, email, senha);
                 return usuario;
             }
 
