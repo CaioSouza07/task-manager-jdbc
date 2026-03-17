@@ -18,9 +18,9 @@ public class ConnectionFactory {
 
     public Connection get() throws SQLException {
 
-        String url = "jdbc:mysql://localhost:3306/teste";
-        String user = "root";
-        String password = "univille";
+        String url = "jdbc:mysql://localhost:5432/task_manager";
+        String user = "postgres";
+        String password = "postgres";
 
         Connection conn = DriverManager.getConnection(url, user, password);
         return conn;
