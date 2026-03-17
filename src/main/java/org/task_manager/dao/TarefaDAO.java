@@ -91,7 +91,8 @@ public class TarefaDAO extends BaseDAO{
 
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("Erro ao obter as tarefas: " + e.getMessage());
+            e.printStackTrace();
         }
 
     }
