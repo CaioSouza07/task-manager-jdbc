@@ -117,12 +117,16 @@ public class App
                             System.out.println("-".repeat(5));
                             System.out.println("Tarefas");
                             for (Tarefa tarefa : listaTarefas){
-                                System.out.println("| " + tarefa.getId() + " | " + tarefa.getTitulo());
-                                System.out.println("| Descrição: " + tarefa.getDescricao() + "\n");
+                                System.out.println("| ID: " + tarefa.getId());
+                                System.out.println("| Título: " + tarefa.getTitulo());
+                                System.out.println("| Descrição: " + tarefa.getDescricao());
+                                System.out.println("| Situação: " + tarefa.getSituacao() + "\n");
                             }
                         }
 
                     } else if (opcaoDesejada == 2) {
+
+
 
                     } else if (opcaoDesejada == 3) {
 
@@ -135,11 +139,30 @@ public class App
                         TarefaDAO tarefaDAO = new TarefaDAO();
 
                         Tarefa tarefa = new Tarefa(titulo, descricao, Situacao.PENDENTE, usuario);
-                        tarefaDAO.cadastrarTarefa(tarefa);
+                        tarefaDAO.salvar(tarefa);
 
                         System.out.println("\nTarefa cadastrada com sucesso!");
 
                     } else if (opcaoDesejada == 4) {
+
+                        System.out.println("-".repeat(5) + "DELETAR TAREFA" + "-".repeat(5));
+                        System.out.println("Digite o id da tarefa: ");
+                        Long id = leitor.nextLong();
+                        leitor.nextLine();
+
+                        TarefaDAO tarefaDAO = new TarefaDAO();
+                        Tarefa tarefaParaDeletar = tarefaDAO.findById(id, usuario);
+
+                        if (tarefaParaDeletar.getTitulo() == null){
+                            System.out.println("\nNão encontrado essa tarefa para o seu usuário!");
+                        }else{
+                            tarefaDAO.deletar(tarefaParaDeletar);
+                            System.out.println("\nDeletado com sucesso!");
+                        }
+
+
+
+
 
                     } else if (opcaoDesejada == 5) {
 

@@ -10,10 +10,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TarefaDAO extends BaseDAO{
 
-    public void cadastrarTarefa(Tarefa tarefa){
+    public void salvar(Tarefa tarefa){
 
         String query = "INSERT INTO tarefas (titulo, descricao, situacao, usuario_id) VALUES (?, ?, ?, ?)";
 
@@ -35,6 +36,8 @@ public class TarefaDAO extends BaseDAO{
         }
 
     }
+
+
 
     public List<Tarefa> obterTodosPorUsuario(Usuario usuario){
 
@@ -72,7 +75,47 @@ public class TarefaDAO extends BaseDAO{
         return listaTarefas;
     }
 
-    public void deletarTarefa(Tarefa tarefa){
+    public Tarefa findById(Long id, Usuario usuario){
+
+        String query = "SELECT * FROM tarefas WHERE id = ? AND usuario_id = ?";
+
+        try (
+                Connection conn = conn();
+                PreparedStatement pre = conn.prepareStatement(query)
+                ){
+
+            pre.setLong(1, id);
+            pre.setLong(2, usuario.getId());
+
+            ResultSet resultado = pre.executeQuery();
+
+
+            if(resultado.next()){
+                do{
+
+                    Long idTarefa = resultado.getLong("id");
+                    String titulo = resultado.getString("titulo");
+                    String descricao = resultado.getString("descricao");
+                    Situacao situacao = Situacao.valueOf(resultado.getString("situacao"));
+
+                    Tarefa tarefa = new Tarefa(idTarefa, titulo, descricao, situacao, usuario);
+
+                    return tarefa;
+                }while(resultado.next());
+            }else{
+                return new Tarefa();
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao achar a tarefa: " + e.getMessage());
+            e.printStackTrace();
+            return new Tarefa();
+        }
+
+
+    }
+
+    public void deletar(Tarefa tarefa){
 
         String query = "DELETE FROM tarefas WHERE id = ?";
 
@@ -86,10 +129,11 @@ public class TarefaDAO extends BaseDAO{
             pre.execute();
 
         } catch (SQLException e) {
-            System.out.println("Erro ao obter as tarefas: " + e.getMessage());
+            System.out.println("Erro ao deletar a tarefa: " + e.getMessage());
             e.printStackTrace();
         }
 
     }
+
 
 }
