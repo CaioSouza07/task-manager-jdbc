@@ -17,7 +17,7 @@ public class App
 
         Scanner leitor = new Scanner(System.in);
 
-        System.out.println("Seja bem-vindo ao TaskManager!\n");
+        System.out.println("\nSeja bem-vindo ao TaskManager!\n");
 
         Usuario usuario = new Usuario();
         boolean acaoEscolhida = false;
@@ -101,7 +101,8 @@ public class App
                     System.out.println("3 - Adicionar tarefa");
                     System.out.println("4 - Deletar tarefa");
                     System.out.println("5 - Editar tarefa");
-                    System.out.println("6 - Encerrar\n");
+                    System.out.println("6 - Listar tarefas (Filtro de Situacao)");
+                    System.out.println("7 - Encerrar\n");
 
                     int opcaoDesejada = leitor.nextInt();
                     leitor.nextLine();
@@ -114,8 +115,7 @@ public class App
                         if(listaTarefas.isEmpty()){
                             System.out.println("Nenhuma tarefa criada por este usuário!");
                         }else{
-                            System.out.println("-".repeat(5));
-                            System.out.println("Tarefas");
+                            System.out.println("-".repeat(5) + "LISTA DE TAREFAS" + "-".repeat(5));
                             for (Tarefa tarefa : listaTarefas){
                                 System.out.println("| ID: " + tarefa.getId());
                                 System.out.println("| Título: " + tarefa.getTitulo());
@@ -126,7 +126,47 @@ public class App
 
                     } else if (opcaoDesejada == 2) {
 
+                        System.out.println("-".repeat(5) + "ATUALIZAR TAREFA" + "-".repeat(5));
+                        System.out.println("Digite o id da tarefa: ");
+                        Long id = leitor.nextLong();
+                        leitor.nextLine();
+                        System.out.println("Qual situação deseja alterar? \n");
+                        System.out.println("1 - PENDENTE");
+                        System.out.println("2 - ANDAMENTO");
+                        System.out.println("3 - CONCLUIDO\n");
 
+                        int opcao = leitor.nextInt();
+                        leitor.nextLine();
+
+                        TarefaDAO tarefaDAO = new TarefaDAO();
+                        Tarefa tarefa = tarefaDAO.findById(id, usuario);
+                        Situacao novaSituacao = tarefa.getSituacao();
+
+                        switch (opcao){
+                            case 1:
+                                novaSituacao = Situacao.PENDENTE;
+                                break;
+                            case 2:
+                                novaSituacao = Situacao.ANDAMENTO;
+                                break;
+                            case 3:
+                                novaSituacao = Situacao.CONCLUIDO;
+                                break;
+                        }
+
+                        if (tarefa.getTitulo() == null){
+                            System.out.println("\nNão encontrado essa tarefa para o seu usuário!");
+                        }else{
+
+                            if(opcao >= 1 && opcao <= 3){
+                                tarefa.setSituacao(novaSituacao);
+                                tarefaDAO.atualizar(tarefa);
+                                System.out.println("\nTarefa atualizada com sucesso!");
+                            }else{
+                                System.out.println("\nDigite uma opcao valida!");
+                            }
+
+                        }
 
                     } else if (opcaoDesejada == 3) {
 
@@ -167,6 +207,55 @@ public class App
                     } else if (opcaoDesejada == 5) {
 
                     } else if (opcaoDesejada == 6) {
+                        System.out.println("-".repeat(5) + "FILTRO SITUAÇÃO" + "-".repeat(5));
+                        System.out.println("Qual situação deseja filtrar? \n");
+                        System.out.println("1 - PENDENTE");
+                        System.out.println("2 - ANDAMENTO");
+                        System.out.println("3 - CONCLUIDO\n");
+
+                        int opcao = leitor.nextInt();
+                        leitor.nextLine();
+
+
+
+                        if(opcao < 1 || opcao > 3){
+                            System.out.println("\nDigite uma opcao valida!");
+                        }else{
+
+                            Situacao situacaoFiltro;
+                            switch (opcao){
+                                case 1:
+                                    situacaoFiltro = Situacao.PENDENTE;
+                                    break;
+                                case 2:
+                                    situacaoFiltro = Situacao.ANDAMENTO;
+                                    break;
+                                case 3:
+                                    situacaoFiltro = Situacao.CONCLUIDO;
+                                    break;
+                                default:
+                                    situacaoFiltro = Situacao.PENDENTE;
+                            }
+
+                            TarefaDAO tarefaDAO = new TarefaDAO();
+                            List<Tarefa> listaTarefas = tarefaDAO.obterTarefasFiltradasPorUsuario(usuario, situacaoFiltro);
+
+                            if(listaTarefas.isEmpty()){
+                                System.out.println("Nenhuma tarefa criada por este usuário!");
+                            }else{
+                                System.out.println("-".repeat(5) + "LISTA DE TAREFAS (FILTRADO)" + "-".repeat(5));
+                                for (Tarefa tarefa : listaTarefas){
+                                    System.out.println("| ID: " + tarefa.getId());
+                                    System.out.println("| Título: " + tarefa.getTitulo());
+                                    System.out.println("| Descrição: " + tarefa.getDescricao());
+                                    System.out.println("| Situação: " + tarefa.getSituacao() + "\n");
+                                }
+                            }
+                        }
+
+
+
+                    } else if (opcaoDesejada == 7) {
                         System.out.println("Encerrando programa...");
                         encerrarPrograma = true;
                     } else {

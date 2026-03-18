@@ -37,6 +37,44 @@ public class TarefaDAO extends BaseDAO{
 
     }
 
+    public List<Tarefa> obterTarefasFiltradasPorUsuario(Usuario usuario, Situacao situacaoFiltro){
+
+        String query = "SELECT * FROM tarefas WHERE usuario_id = ? AND situacao = ?";
+        List<Tarefa> listaTarefas = new ArrayList<>();
+
+        System.out.println();
+
+        try (
+                Connection conn = conn();
+                PreparedStatement pre = conn.prepareStatement(query);
+        ){
+
+            pre.setLong(1, usuario.getId());
+            pre.setString(2, situacaoFiltro.name());
+
+            ResultSet resultado = pre.executeQuery();
+
+            while (resultado.next()){
+
+                Long id = resultado.getLong("id");
+                String titulo = resultado.getString("titulo");
+                String descricao = resultado.getString("descricao");
+                Situacao situacao = Situacao.valueOf(resultado.getString("situacao"));
+
+                Tarefa tarefa = new Tarefa(id, titulo, descricao, situacao, usuario);
+
+                listaTarefas.add(tarefa);
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao obter as tarefas: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return listaTarefas;
+    }
+
 
 
     public List<Tarefa> obterTodosPorUsuario(Usuario usuario){
@@ -130,6 +168,29 @@ public class TarefaDAO extends BaseDAO{
 
         } catch (SQLException e) {
             System.out.println("Erro ao deletar a tarefa: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+    }
+
+    public void atualizar(Tarefa tarefa){
+
+        String query = "UPDATE tarefas SET titulo = ?, descricao = ?, situacao = ? WHERE id = ?";
+
+        try (
+                Connection conn = conn();
+                PreparedStatement pre = conn.prepareStatement(query);
+                ){
+
+            pre.setString(1, tarefa.getTitulo());
+            pre.setString(2, tarefa.getDescricao());
+            pre.setString(3, tarefa.getSituacao().name());
+            pre.setLong(4, tarefa.getId());
+
+            pre.execute();
+
+        } catch (SQLException e) {
+            System.out.println("Erro ao atualizar a tarefa: " + e.getMessage());
             e.printStackTrace();
         }
 
